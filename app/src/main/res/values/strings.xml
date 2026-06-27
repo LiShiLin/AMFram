@@ -1,0 +1,37 @@
+<resources>
+    <string name="app_name">AMFram</string>
+    <string name="add_source">添加数据源</string>
+    <string name="settings">设置</string>
+    <string name="play">播放</string>
+    <string name="source_name">数据源名称</string>
+    <string name="source_type">类型</string>
+    <string name="host">主机地址</string>
+    <string name="share_name">共享名称</string>
+    <string name="username">用户名</string>
+    <string name="password">密码</string>
+    <string name="connect">连接</string>
+    <string name="save">保存</string>
+    <string name="cancel">取消</string>
+    <string name="delete">删除</string>
+    <string name="dark_mode">深色模式</string>
+    <string name="show_mode">展示模式</string>
+    <string name="interval">切换间隔(秒)</string>
+    <string name="no_sources">暂无数据源，点击右上角添加</string>
+    <string name="connect_failed">连接失败</string>
+    <string name="saved">已保存</string>
+    <string name="default_unsplash">Unsplash Sample</string>
+    <string name="pick_folder">选择文件夹</string>
+    <string name="folder_not_selected">未选择文件夹</string>
+    <string name="grid_rows">行数</string>
+    <string name="grid_cols">列数</string>
+    <string name="grid_size">相框边距</string>
+    <string name="grid_mode">布局方式</string>
+    <string name="grid_mode_center">居中</string>
+    <string name="grid_mode_fill">铺满</string>
+    <string name="replace_interval">替换间隔(秒)</string>
+    <string name="back">返回</string>
+    <string name="btn_back">‹</string>
+    <string name="pick_folder_ok">选此目录</string>
+    <string name="pick_folder_title">选择文件夹</string>
+    <string name="pick_storage_perm">需要存储权限访问文件</string>
+</resources>
