@@ -1,8 +1,9 @@
 package com.amfram.ui
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.view.animation.AlphaAnimation
 import androidx.recyclerview.widget.RecyclerView
 import coil.ImageLoader
 import coil.request.ImageRequest
@@ -10,18 +11,14 @@ import coil.request.ImageResult
 import coil.transform.BlurTransformation
 import com.amfram.data.MediaItem
 
-/**
- * 宫格图片适配器
- *  - mode = "center": 模糊背景铺满 + 前景居中显示
- *  - mode = "fill":   前景 centerCrop 直接铺满
- *  - replaceItem(position, item): 渐隐前景 → 加载新图 → 渐显前景（同步刷新背景）
- */
 class GridPhotoAdapter(
     private val imageLoader: ImageLoader,
     private val itemWpx: Int,
     private val itemHpx: Int,
-    private val mode: String // "center" / "fill"
+    private val mode: String
 ) : RecyclerView.Adapter<GridPhotoAdapter.VH>() {
+
+    var recyclerView: RecyclerView? = null
 
     class VH(val binding: com.amfram.databinding.ItemPhotoGridBinding) : RecyclerView.ViewHolder(binding.root)
 
@@ -35,11 +32,30 @@ class GridPhotoAdapter(
 
     fun itemAt(pos: Int): MediaItem? = items.getOrNull(pos)
 
-    /** 单格替换，含渐隐渐显动画 */
     fun replaceItem(position: Int, newItem: MediaItem) {
         if (position !in items.indices) return
         items[position] = newItem
-        notifyItemChanged(position)
+        val holder = recyclerView?.findViewHolderForAdapterPosition(position) as? VH
+        if (holder != null) {
+            crossfade(holder, newItem)
+        } else {
+            notifyItemChanged(position)
+        }
+    }
+
+    private fun crossfade(holder: VH, newItem: MediaItem) {
+        val oldFg = holder.binding.photoView
+        val oldBg = holder.binding.bgView
+
+        oldFg.animate().alpha(0f).setDuration(400).setListener(object : AnimatorListenerAdapter() {
+            override fun onAnimationEnd(animation: Animator) {
+                oldFg.animate().setListener(null)
+                bindContent(holder, newItem)
+            }
+        }).start()
+        if (mode == "center" && oldBg.visibility == android.view.View.VISIBLE) {
+            oldBg.animate().alpha(0f).setDuration(400).start()
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
@@ -54,37 +70,47 @@ class GridPhotoAdapter(
 
     override fun onBindViewHolder(holder: VH, position: Int) {
         val item = items[position]
+        bindContent(holder, item)
+    }
+
+    private fun bindContent(holder: VH, item: MediaItem) {
         val ctx = holder.itemView.context
+
+        holder.binding.photoView.alpha = 0f
+        holder.binding.photoView.scaleType = android.widget.ImageView.ScaleType.CENTER_CROP
 
         if (mode == "center") {
             holder.binding.bgView.visibility = android.view.View.VISIBLE
+            holder.binding.bgView.alpha = 0f
             holder.binding.photoView.scaleType = android.widget.ImageView.ScaleType.FIT_CENTER
-            val bgData = toLoadData(item.path)
+
             val bgReq = ImageRequest.Builder(ctx)
-                .data(bgData)
+                .data(toLoadData(item.path))
                 .transformations(BlurTransformation(ctx, 25f))
-                .crossfade(true)
+                .crossfade(false)
                 .target(holder.binding.bgView)
                 .build()
             imageLoader.enqueue(bgReq)
         } else {
             holder.binding.bgView.visibility = android.view.View.GONE
-            holder.binding.photoView.scaleType = android.widget.ImageView.ScaleType.CENTER_CROP
         }
 
-        // 前景图：从透明淡入显示（替换动画的"渐显"部分）
-        holder.binding.photoView.alpha = 0f
         val req = ImageRequest.Builder(ctx)
             .data(toLoadData(item.path))
             .crossfade(false)
             .target(holder.binding.photoView)
             .listener(object : ImageRequest.Listener {
                 override fun onSuccess(request: ImageRequest, metadata: ImageResult.Metadata) {
-                    val anim = AlphaAnimation(0f, 1f).apply { duration = 500 }
-                    holder.binding.photoView.startAnimation(anim)
-                    holder.binding.photoView.alpha = 1f
+                    holder.binding.photoView.animate().alpha(1f).setDuration(1000).start()
+                    if (mode == "center") {
+                        holder.binding.bgView.animate().alpha(1f).setDuration(1000).start()
+                    }
                 }
                 override fun onError(request: ImageRequest, throwable: Throwable) {
+                    holder.binding.photoView.alpha = 1f
+                    if (mode == "center") {
+                        holder.binding.bgView.alpha = 1f
+                    }
                     android.util.Log.e("AMFram", "Grid photo load FAIL: ${item.path}", throwable)
                 }
             })

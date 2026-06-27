@@ -92,7 +92,7 @@ class PlayActivity : AppCompatActivity() {
                 imageLoader,
                 cellW, cellH,
                 AppSettings.gridMode(this)
-            )
+            ).also { it.recyclerView = binding.gridView }
             with(binding.gridView) {
                 layoutManager = GridLayoutManager(this@PlayActivity, cols)
                 adapter = gridAdapter
