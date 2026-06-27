@@ -34,9 +34,7 @@ class SettingsActivity : AppCompatActivity() {
             override fun onItemSelected(p: android.widget.AdapterView<*>?, v: View?, pos: Int, id: Long) {
                 val mode = ShowMode.values()[pos]
                 binding.gridFields.visibility = if (mode == ShowMode.FrameWall) View.VISIBLE else View.GONE
-                binding.intervalLayout.visibility =
-                    if (mode == ShowMode.Slide || mode == ShowMode.Fade || mode == ShowMode.Bento || mode == ShowMode.Calender)
-                        View.VISIBLE else View.GONE
+                binding.intervalLayout.visibility = if (mode == ShowMode.Slide) View.VISIBLE else View.GONE
             }
             override fun onNothingSelected(p: android.widget.AdapterView<*>?) {}
         }
@@ -48,8 +46,11 @@ class SettingsActivity : AppCompatActivity() {
         )
 
         binding.intervalEditText.setText(AppSettings.intervalSeconds(this).toString())
-        binding.gridRowsEditText.setText(AppSettings.gridRows(this).toString())
-        binding.gridColsEditText.setText(AppSettings.gridCols(this).toString())
+        val rowValues = (1..6).map { it.toString() }
+        binding.gridRowsSpinner.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, rowValues)
+        binding.gridRowsSpinner.setSelection(AppSettings.gridRows(this) - 1)
+        binding.gridColsSpinner.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, rowValues)
+        binding.gridColsSpinner.setSelection(AppSettings.gridCols(this) - 1)
         binding.replaceIntervalEditText.setText(AppSettings.replaceIntervalSeconds(this).toString())
 
         val spacing = AppSettings.gridSpacingDp(this)
@@ -75,12 +76,8 @@ class SettingsActivity : AppCompatActivity() {
         binding.intervalEditText.text.toString().toIntOrNull()?.let {
             if (it > 0) AppSettings.setInterval(this, it)
         }
-        binding.gridRowsEditText.text.toString().toIntOrNull()?.let {
-            if (it in 1..20) AppSettings.setGridRows(this, it)
-        }
-        binding.gridColsEditText.text.toString().toIntOrNull()?.let {
-            if (it in 1..20) AppSettings.setGridCols(this, it)
-        }
+        AppSettings.setGridRows(this, binding.gridRowsSpinner.selectedItemPosition + 1)
+        AppSettings.setGridCols(this, binding.gridColsSpinner.selectedItemPosition + 1)
         val fillSelected = binding.gridModeSpinner.selectedItemPosition == 1
         AppSettings.setGridMode(this, if (fillSelected) "fill" else "center")
         binding.replaceIntervalEditText.text.toString().toIntOrNull()?.let {

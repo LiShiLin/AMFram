@@ -2,6 +2,7 @@ package com.amfram.util
 
 import android.content.Context
 import androidx.appcompat.app.AppCompatDelegate
+import com.amfram.data.ShowMode
 
 /**
  * 应用设置（明暗主题、默认展示模式、播放间隔），基于 SharedPreferences。
@@ -37,7 +38,7 @@ object AppSettings {
     }
 
     fun showModeOrdinal(ctx: Context): Int =
-        prefs(ctx).getInt(KEY_MODE, 0)
+        prefs(ctx).getInt(KEY_MODE, 0).coerceIn(0, ShowMode.values().lastIndex)
 
     fun setShowMode(ctx: Context, ordinal: Int) =
         prefs(ctx).edit().putInt(KEY_MODE, ordinal).apply()

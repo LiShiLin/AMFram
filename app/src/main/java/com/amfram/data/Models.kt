@@ -5,7 +5,7 @@ import kotlinx.parcelize.Parcelize
 
 enum class SourceType { Local, SMB, Unsplash }
 
-enum class ShowMode { Slide, Fade, FrameWall, Bento, Calender }
+enum class ShowMode { Slide, FrameWall }
 
 @Parcelize
 data class MediaItem(
