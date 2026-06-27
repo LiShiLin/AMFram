@@ -51,7 +51,9 @@ class SettingsActivity : AppCompatActivity() {
         binding.gridRowsSpinner.setSelection(AppSettings.gridRows(this) - 1)
         binding.gridColsSpinner.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, rowValues)
         binding.gridColsSpinner.setSelection(AppSettings.gridCols(this) - 1)
-        binding.replaceIntervalEditText.setText(AppSettings.replaceIntervalSeconds(this).toString())
+        val replaceValues = (3..15).map { it.toString() }
+        binding.replaceIntervalSpinner.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, replaceValues)
+        binding.replaceIntervalSpinner.setSelection((AppSettings.replaceIntervalSeconds(this).coerceIn(3, 15) - 3))
 
         val spacing = AppSettings.gridSpacingDp(this)
         binding.gridSpacingSeekBar.max = 4 // 0..4 -> 1..5dp
@@ -80,8 +82,6 @@ class SettingsActivity : AppCompatActivity() {
         AppSettings.setGridCols(this, binding.gridColsSpinner.selectedItemPosition + 1)
         val fillSelected = binding.gridModeSpinner.selectedItemPosition == 1
         AppSettings.setGridMode(this, if (fillSelected) "fill" else "center")
-        binding.replaceIntervalEditText.text.toString().toIntOrNull()?.let {
-            if (it > 0) AppSettings.setReplaceInterval(this, it)
-        }
+        AppSettings.setReplaceInterval(this, binding.replaceIntervalSpinner.selectedItemPosition + 3)
     }
 }

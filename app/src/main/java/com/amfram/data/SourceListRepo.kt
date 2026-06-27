@@ -11,25 +11,10 @@ import com.google.gson.reflect.TypeToken
 object SourceListRepo {
     private const val PREF_NAME = "amfram_sources"
     private const val KEY = "source_list"
-    private const val KEY_INIT = "initialized"
-
     private val gson = Gson()
 
     private fun prefs(ctx: Context) =
         ctx.applicationContext.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
-
-    fun ensureDefault(ctx: Context) {
-        val p = prefs(ctx)
-        if (p.getBoolean(KEY_INIT, false)) return
-        val defaults = listOf(
-            SourceConfig(
-                name = ctx.getString(com.amfram.R.string.default_unsplash),
-                type = SourceType.Unsplash,
-                path = "https://images.unsplash.com/sample"
-            )
-        )
-        p.edit().putString(KEY, gson.toJson(defaults)).putBoolean(KEY_INIT, true).apply()
-    }
 
     fun load(ctx: Context): List<SourceConfig> {
         val raw = prefs(ctx).getString(KEY, null) ?: return emptyList()
