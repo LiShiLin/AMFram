@@ -41,7 +41,8 @@
         <activity
             android:name=".ui.SettingsActivity"
             android:exported="false"
-            android:parentActivityName=".ui.MainActivity" />
+            android:parentActivityName=".ui.MainActivity"
+            android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".ui.FilePickerActivity"
             android:exported="false" />

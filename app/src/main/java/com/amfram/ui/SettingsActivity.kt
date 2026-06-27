@@ -26,6 +26,17 @@ class SettingsActivity : AppCompatActivity() {
             AppSettings.setDark(this, checked)
         }
 
+        val orientNames = listOf(getString(R.string.orientation_auto), getString(R.string.orientation_portrait), getString(R.string.orientation_landscape))
+        binding.orientationSpinner.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, orientNames)
+        binding.orientationSpinner.setSelection(AppSettings.orientation(this))
+        binding.orientationSpinner.onItemSelectedListener = object : android.widget.AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(p: android.widget.AdapterView<*>?, v: View?, pos: Int, id: Long) {
+                AppSettings.setOrientation(this@SettingsActivity, pos)
+                AppSettings.applyOrientation(this@SettingsActivity)
+            }
+            override fun onNothingSelected(p: android.widget.AdapterView<*>?) {}
+        }
+
         val modes = ShowMode.values().map { it.name }
         binding.modeSpinner.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, modes)
         binding.modeSpinner.setSelection(AppSettings.showModeOrdinal(this))

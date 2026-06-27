@@ -1,6 +1,7 @@
 package com.amfram.util
 
 import android.content.Context
+import android.content.pm.ActivityInfo
 import androidx.appcompat.app.AppCompatDelegate
 import com.amfram.data.ShowMode
 
@@ -17,6 +18,7 @@ object AppSettings {
     private const val KEY_GRID_COLS = "grid_cols"
     private const val KEY_GRID_SPACING = "grid_spacing_dp" // 1..5
     private const val KEY_GRID_MODE = "grid_mode" // center / fill
+    private const val KEY_ORIENTATION = "orientation" // 0=auto, 1=portrait, 2=landscape
     private const val KEY_REPLACE_INTERVAL = "replace_interval_seconds"
 
     fun prefs(ctx: Context) = ctx.applicationContext.getSharedPreferences(PREF, Context.MODE_PRIVATE)
@@ -68,6 +70,19 @@ object AppSettings {
 
     fun setGridMode(ctx: Context, mode: String) =
         prefs(ctx).edit().putString(KEY_GRID_MODE, mode).apply()
+
+    fun orientation(ctx: Context): Int = prefs(ctx).getInt(KEY_ORIENTATION, 0)
+
+    fun setOrientation(ctx: Context, v: Int) =
+        prefs(ctx).edit().putInt(KEY_ORIENTATION, v).apply()
+
+    fun applyOrientation(activity: androidx.appcompat.app.AppCompatActivity) {
+        when (orientation(activity)) {
+            1 -> activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT
+            2 -> activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
+            else -> activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+        }
+    }
 
     fun replaceIntervalSeconds(ctx: Context): Int = prefs(ctx).getInt(KEY_REPLACE_INTERVAL, 5)
 
