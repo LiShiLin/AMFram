@@ -1,8 +1,12 @@
 # AMFram (Android Media Frame)
 
+---
+
+## 中文
+
 专为 **Android 4.4 (API 19)** 及以上版本开发的电子相册应用，将旧设备变身为数码相框。
 
-## 功能
+### 功能
 
 - **多源图片加载** — 支持本地存储、SMB 网络共享、Unsplash 示例图片来源
 - **5 种显示模式**
@@ -17,13 +21,7 @@
 - **定时轮播** — 幻灯片间隔、照片墙刷新间隔均可自定义
 - **极速兼容** — 最低支持 Android 4.4 (KitKat)
 
-## 截图
-
-| 主页 | 播放界面 | 设置 |
-|------|---------|------|
-|      |         |      |
-
-## 构建
+### 构建
 
 ```bash
 ./gradlew assembleDebug
@@ -31,7 +29,7 @@
 
 APK 输出路径：`app/build/outputs/apk/debug/app-debug.apk`
 
-## 技术栈
+### 技术栈
 
 | 技术 | 版本 |
 |------|------|
@@ -44,6 +42,52 @@ APK 输出路径：`app/build/outputs/apk/debug/app-debug.apk`
 | 异步 | Kotlin Coroutines |
 | UI | ViewPager / RecyclerView / Material Components |
 
-## License
+### 许可
+
+MIT
+
+---
+
+## English
+
+A digital photo frame app designed for **Android 4.4 (API 19)** and above, turning old devices into a digital photo frame.
+
+### Features
+
+- **Multi-source image loading** — Local storage, SMB network shares, Unsplash sample images
+- **5 display modes**
+  - **Slide** — Horizontal auto-slideshow with ViewPager
+  - **Fade** — Crossfade transitions
+  - **FrameWall** — Grid layout with random auto-replacing cells
+  - **Bento** — Bentō-style grid arrangement
+  - **Calender** — Calendar-style display
+- **SMB network sharing** — Access LAN shared folders via the smbj library, with AES-encrypted password storage
+- **Immersive fullscreen** — Hides status and navigation bars for distraction-free viewing
+- **Dark mode** — Toggle between dark and light themes
+- **Auto slideshow** — Configurable interval for slide shows and grid replacements
+- **Broad compatibility** — Supports Android 4.4 KitKat and above
+
+### Build
+
+```bash
+./gradlew assembleDebug
+```
+
+APK output: `app/build/outputs/apk/debug/app-debug.apk`
+
+### Tech Stack
+
+| Technology | Version |
+|------------|---------|
+| Kotlin | 1.8.22 |
+| Min SDK | 19 (Android 4.4) |
+| Target SDK | 19 |
+| Image Loading | Coil 1.4.0 |
+| SMB Protocol | smbj 0.14.0 |
+| Serialization | Gson |
+| Async | Kotlin Coroutines |
+| UI | ViewPager / RecyclerView / Material Components |
+
+### License
 
 MIT
