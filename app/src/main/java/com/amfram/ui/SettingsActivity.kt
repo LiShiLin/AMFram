@@ -67,17 +67,16 @@ class SettingsActivity : AppCompatActivity() {
         binding.replaceIntervalSpinner.setSelection((AppSettings.replaceIntervalSeconds(this).coerceIn(3, 15) - 3))
 
         val spacing = AppSettings.gridSpacingDp(this)
-        binding.gridSpacingSeekBar.max = 4 // 0..4 -> 1..5dp
-        binding.gridSpacingSeekBar.progress = spacing - 1
+        binding.gridSpacingSeekBar.max = 5 // 0..5dp
+        binding.gridSpacingSeekBar.progress = spacing
         binding.gridSpacingValueText.text = getString(R.string.grid_size) + ": " + spacing + "dp"
         binding.gridSpacingSeekBar.setOnSeekBarChangeListener(object : android.widget.SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: android.widget.SeekBar?, progress: Int, fromUser: Boolean) {
-                val v = progress + 1
-                binding.gridSpacingValueText.text = getString(R.string.grid_size) + ": " + v + "dp"
+                binding.gridSpacingValueText.text = getString(R.string.grid_size) + ": " + progress + "dp"
             }
             override fun onStartTrackingTouch(seekBar: android.widget.SeekBar?) {}
             override fun onStopTrackingTouch(seekBar: android.widget.SeekBar?) {
-                AppSettings.setGridSpacing(this@SettingsActivity, (seekBar?.progress ?: 1) + 1)
+                AppSettings.setGridSpacing(this@SettingsActivity, seekBar?.progress ?: 0)
             }
         })
     }

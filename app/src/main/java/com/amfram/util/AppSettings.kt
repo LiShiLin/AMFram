@@ -61,10 +61,10 @@ object AppSettings {
     fun setGridCols(ctx: Context, v: Int) =
         prefs(ctx).edit().putInt(KEY_GRID_COLS, v).apply()
 
-    fun gridSpacingDp(ctx: Context): Int = prefs(ctx).getInt(KEY_GRID_SPACING, 2).coerceIn(1, 5)
+    fun gridSpacingDp(ctx: Context): Int = prefs(ctx).getInt(KEY_GRID_SPACING, 2).coerceIn(0, 5)
 
     fun setGridSpacing(ctx: Context, v: Int) =
-        prefs(ctx).edit().putInt(KEY_GRID_SPACING, v.coerceIn(1, 5)).apply()
+        prefs(ctx).edit().putInt(KEY_GRID_SPACING, v.coerceIn(0, 5)).apply()
 
     fun gridMode(ctx: Context): String = prefs(ctx).getString(KEY_GRID_MODE, "center") ?: "center"
 
