@@ -130,7 +130,10 @@ class PlayActivity : AppCompatActivity() {
                 val rows = AppSettings.gridRows(this@PlayActivity).coerceIn(1, 20)
                 val cellCount = rows * cols
                 // 初始只放 rows*cols 个格子，固定不可滑动
-                gridAdapter?.submitList(items.take(cellCount))
+                val isRandom = AppSettings.replaceOrder(this@PlayActivity) == "random"
+                gridAdapter?.submitList(
+                    if (isRandom) items.shuffled().take(cellCount) else items.take(cellCount)
+                )
                 startGridReplaceLoop()
             } else {
                 pagerAdapter.submitList(items)
@@ -155,8 +158,9 @@ class PlayActivity : AppCompatActivity() {
     }
 
     /**
-     * 宫格模式：每 [replaceInterval] 秒随机选一格，用数据源下一张图替换（渐隐渐显）；
-     * 把当前所有格子都替换过一遍后重置 usedPositions，循环。
+     * 宫格模式：每 [replaceInterval] 秒替换一格（渐隐渐显）；
+     * 随机模式：从图库随机挑一张图，随机选格子替换；
+     * 顺序模式：按图库列表顺序逐格替换。
      */
     private fun startGridReplaceLoop() {
         if (playing) return
@@ -167,21 +171,33 @@ class PlayActivity : AppCompatActivity() {
         val cols = AppSettings.gridCols(this).coerceIn(1, 20)
         val rows = AppSettings.gridRows(this).coerceIn(1, 20)
         val cellCount = rows * cols
-        // 从初始已展示的图片之后开始取新图
+        val isRandom = AppSettings.replaceOrder(this) == "random"
+        // 顺序模式从初始已展示的图片之后开始取新图
         nextImagePointer = cellCount
         lifecycleScope.launch {
             delay(interval * 1000)
             while (playing && gridAdapter != null) {
                 val adapter = gridAdapter ?: break
                 if (cellCount == 0) break
-                if (usedPositions.size >= cellCount) usedPositions.clear()
 
-                val candidates = (0 until cellCount).filter { it !in usedPositions }
-                val pos = if (candidates.isNotEmpty()) candidates[Random.nextInt(candidates.size)]
-                    else Random.nextInt(cellCount)
-                usedPositions.add(pos)
+                // 选格子
+                val pos: Int
+                if (isRandom) {
+                    if (usedPositions.size >= cellCount) usedPositions.clear()
+                    val candidates = (0 until cellCount).filter { it !in usedPositions }
+                    pos = if (candidates.isNotEmpty()) candidates[Random.nextInt(candidates.size)]
+                        else Random.nextInt(cellCount)
+                    usedPositions.add(pos)
+                } else {
+                    pos = (nextImagePointer - cellCount) % cellCount
+                }
 
-                val newItem = items[nextImagePointer % total]
+                // 选图片
+                val newItem = if (isRandom) {
+                    items[Random.nextInt(total)]
+                } else {
+                    items[nextImagePointer % total]
+                }
                 nextImagePointer++
 
                 runOnUiThread { adapter.replaceItem(pos, newItem) }

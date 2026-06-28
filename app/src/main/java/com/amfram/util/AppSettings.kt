@@ -20,6 +20,7 @@ object AppSettings {
     private const val KEY_GRID_MODE = "grid_mode" // center / fill
     private const val KEY_ORIENTATION = "orientation" // 0=auto, 1=portrait, 2=landscape
     private const val KEY_REPLACE_INTERVAL = "replace_interval_seconds"
+    private const val KEY_REPLACE_ORDER = "replace_order" // random / sequential
 
     fun prefs(ctx: Context) = ctx.applicationContext.getSharedPreferences(PREF, Context.MODE_PRIVATE)
 
@@ -40,7 +41,7 @@ object AppSettings {
     }
 
     fun showModeOrdinal(ctx: Context): Int =
-        prefs(ctx).getInt(KEY_MODE, 0).coerceIn(0, ShowMode.values().lastIndex)
+        prefs(ctx).getInt(KEY_MODE, 1).coerceIn(0, ShowMode.values().lastIndex)
 
     fun setShowMode(ctx: Context, ordinal: Int) =
         prefs(ctx).edit().putInt(KEY_MODE, ordinal).apply()
@@ -88,4 +89,10 @@ object AppSettings {
 
     fun setReplaceInterval(ctx: Context, sec: Int) =
         prefs(ctx).edit().putInt(KEY_REPLACE_INTERVAL, sec).apply()
+
+    fun replaceOrder(ctx: Context): String =
+        prefs(ctx).getString(KEY_REPLACE_ORDER, "random") ?: "random"
+
+    fun setReplaceOrder(ctx: Context, order: String) =
+        prefs(ctx).edit().putString(KEY_REPLACE_ORDER, order).apply()
 }

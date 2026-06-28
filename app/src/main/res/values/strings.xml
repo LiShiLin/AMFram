@@ -34,6 +34,9 @@
     <string name="grid_mode_center">居中</string>
     <string name="grid_mode_fill">铺满</string>
     <string name="replace_interval">替换间隔(秒)</string>
+    <string name="replace_order">替换顺序</string>
+    <string name="replace_order_random">随机</string>
+    <string name="replace_order_sequential">顺序</string>
     <string name="back">返回</string>
     <string name="btn_back">‹</string>
     <string name="pick_folder_ok">选此目录</string>

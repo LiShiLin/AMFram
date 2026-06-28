@@ -21,6 +21,11 @@ class SettingsActivity : AppCompatActivity() {
 
         binding.backButton.setOnClickListener { finish() }
 
+        try {
+            val pkg = packageManager.getPackageInfo(packageName, 0)
+            binding.versionText.text = "v" + pkg.versionName
+        } catch (_: Exception) {}
+
         binding.darkModeSwitch.isChecked = AppSettings.isDark(this)
         binding.darkModeSwitch.setOnCheckedChangeListener { _, checked ->
             AppSettings.setDark(this, checked)
@@ -66,6 +71,10 @@ class SettingsActivity : AppCompatActivity() {
         binding.replaceIntervalSpinner.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, replaceValues)
         binding.replaceIntervalSpinner.setSelection((AppSettings.replaceIntervalSeconds(this).coerceIn(3, 15) - 3))
 
+        val orderNames = listOf(getString(R.string.replace_order_random), getString(R.string.replace_order_sequential))
+        binding.replaceOrderSpinner.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, orderNames)
+        binding.replaceOrderSpinner.setSelection(if (AppSettings.replaceOrder(this) == "sequential") 1 else 0)
+
         val spacing = AppSettings.gridSpacingDp(this)
         binding.gridSpacingSeekBar.max = 5 // 0..5dp
         binding.gridSpacingSeekBar.progress = spacing
@@ -93,5 +102,6 @@ class SettingsActivity : AppCompatActivity() {
         val fillSelected = binding.gridModeSpinner.selectedItemPosition == 1
         AppSettings.setGridMode(this, if (fillSelected) "fill" else "center")
         AppSettings.setReplaceInterval(this, binding.replaceIntervalSpinner.selectedItemPosition + 3)
+        AppSettings.setReplaceOrder(this, if (binding.replaceOrderSpinner.selectedItemPosition == 1) "sequential" else "random")
     }
 }
